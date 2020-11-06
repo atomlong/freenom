@@ -102,7 +102,7 @@ class Mail
         }
 
         self::mail()->addAddress($to, config('mail.toName', '主人')); // 添加收件人，参数2选填
-        self::mail()->addReplyTo(config('mail.replyTo', 'mybsdc@qq.com'), config('mail.replyToName', '作者')); // 备用回复地址，收到的回复的邮件将被发到此地址
+        self::mail()->addReplyTo(config('mail.replyTo', 'admin@eyun.cf'), config('mail.replyToName', '作者')); // 备用回复地址，收到的回复的邮件将被发到此地址
 
         /**
          * 抄送和密送都是添加收件人，抄送方式下，被抄送者知道除被密送者外的所有的收件人，密送方式下，

@@ -1,0 +1,39 @@
+name: Auto active repository
+
+on: 
+  release:
+    types: [published]
+  push:
+    tags:
+    - 'v*'
+    #branches: 
+    #  - master
+  schedule:
+    - cron: '0 0 1 * *'
+   
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 0
+    - name: Reset and Commit
+      run: |
+        AN=$(git log --pretty=format:'%aN' HEAD^..)
+        AE=$(git log --pretty=format:'%aE' HEAD^..)
+        MSG=$(git log --pretty=format:'%s' HEAD^..)
+        AD=$(git log --pretty=format:'%aD' HEAD^..)
+        FILES=($(git log --pretty=format: --name-only HEAD^..))
+        git config --global user.email ${AE}
+        git config --global user.name ${AN}
+        git reset --mixed $(git branch --show-current)~1
+        git add ${FILES[@]}
+        git commit --date="${AD}" -m "${MSG}" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force: true
